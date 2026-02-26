@@ -8,6 +8,7 @@ const DEFAULT_SCOPES = [
   "user-modify-playback-state",
   "user-read-currently-playing",
   "user-read-private",
+  "user-library-read",
   "playlist-read-private",
   "playlist-read-collaborative",
 ].join(" ");

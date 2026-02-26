@@ -50,7 +50,7 @@ SPOTIFY_PLAYER_ADAPTER="librespot"
 
 Optional:
 - `SPOTIFY_REDIRECT_URI`: defaults to `http://127.0.0.1:8888/callback` and must match your Spotify app settings.
-- `SPOTIFY_AUTH_SCOPES`: override default scopes used for the initial auth flow.
+- `SPOTIFY_AUTH_SCOPES`: override default scopes used for the initial auth flow (include `user-library-read` if you want `Liked Songs` in playlists).
 - `SPOTIFY_PLAYER_AUTO_TRANSFER`: `true` by default; auto-transfer playback to the player device during startup.
 - `SPOTIFY_PLAYER_DEVICE_NAME`: defaults to `spotify-tui`.
 - `SPOTIFY_PLAYER_COMMAND`: defaults to `librespot`.
@@ -78,9 +78,13 @@ bun run start
 - `Tab`: toggle focus between search and browse list
 - `Enter` on list item: run action (play playlist, transfer device, play track, etc.)
 
+## Playlists tab
+
+- Includes your playlists and a synthetic `Liked Songs` entry (from your saved tracks), which plays via `spotify:collection:tracks`.
+
 ## Details pane
 
-- Right side is split into `Current Album Cover` (color album art rendered through `ghostty-opentui`) and `Now Playing` (track/album/device metadata + progress + library snapshot).
+- Right side is split into `Current Album Cover` (uses kitty graphics when supported, otherwise `ghostty-opentui` ANSI rendering) and `Now Playing` (track/album/device metadata + progress + library snapshot).
 
 ## Next implementation milestones
 
