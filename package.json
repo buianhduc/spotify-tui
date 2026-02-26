@@ -1,0 +1,25 @@
+{
+  "name": "spotify-tui",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "private": true,
+  "scripts": {
+    "start": "bun run index.ts",
+    "dev": "bun run index.ts",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "trustedDependencies": [
+    "protobufjs"
+  ],
+  "type": "module",
+  "dependencies": {
+    "@opentui/core": "^0.1.83",
+    "ghostty-opentui": "^1.4.5",
+    "jimp": "^1.6.0"
+  }
+}
