@@ -41,6 +41,7 @@ export interface PlaylistSummary {
   name: string;
   tracksTotal: number;
   ownerName: string;
+  contextUri?: string;
 }
 
 export interface UserProfile {

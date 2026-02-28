@@ -77,6 +77,19 @@ interface SpotifySearchTracksResponse {
   };
 }
 
+interface SpotifySavedTracksResponse {
+  total: number;
+}
+
+class SpotifyApiRequestError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+  ) {
+    super(`Spotify API request failed (${status}): ${message}`);
+  }
+}
+
 export class SpotifyWebApiClient implements MusicApiClient {
   constructor(
     private readonly tokenProvider: TokenProvider,
@@ -131,17 +144,23 @@ export class SpotifyWebApiClient implements MusicApiClient {
 
   async getPlaylists(limit = 20): Promise<PlaylistSummary[]> {
     const query = new URLSearchParams({ limit: String(limit) });
-    const playlists = await this.requestJson<SpotifyPlaylistsResponse>(`/me/playlists?${query}`);
+    const [playlists, likedSongs] = await Promise.all([
+      this.requestJson<SpotifyPlaylistsResponse>(`/me/playlists?${query}`),
+      this.getLikedSongsPlaylist(),
+    ]);
+
     if (!playlists) {
-      return [];
+      return likedSongs ? [likedSongs] : [];
     }
 
-    return playlists.items.map((playlist) => ({
+    const mappedPlaylists = playlists.items.map((playlist) => ({
       id: playlist.id,
       name: playlist.name,
       tracksTotal: playlist.tracks.total,
       ownerName: playlist.owner.display_name ?? "Unknown",
     }));
+
+    return likedSongs ? [likedSongs, ...mappedPlaylists] : mappedPlaylists;
   }
 
   async play(request?: PlayRequest): Promise<void> {
@@ -198,6 +217,29 @@ export class SpotifyWebApiClient implements MusicApiClient {
     return result.tracks.items.map(mapTrack);
   }
 
+  private async getLikedSongsPlaylist(): Promise<PlaylistSummary | null> {
+    try {
+      const likedSongs = await this.requestJson<SpotifySavedTracksResponse>("/me/tracks?limit=1");
+      if (!likedSongs) {
+        return null;
+      }
+
+      return {
+        id: "liked-songs",
+        name: "Liked Songs",
+        tracksTotal: likedSongs.total,
+        ownerName: "You",
+        contextUri: "spotify:collection:tracks",
+      };
+    } catch (error) {
+      if (error instanceof SpotifyApiRequestError && error.status === 403) {
+        return null;
+      }
+
+      throw error;
+    }
+  }
+
   private async requestJson<T>(
     path: string,
     init?: RequestInit,
@@ -246,7 +288,7 @@ export class SpotifyWebApiClient implements MusicApiClient {
 
     if (!response.ok && !(allowNotFound && response.status === 404)) {
       const message = await parseSpotifyError(response);
-      throw new Error(`Spotify API request failed (${response.status}): ${message}`);
+      throw new SpotifyApiRequestError(response.status, message);
     }
 
     return response;
