@@ -2,7 +2,9 @@
   "name": "spotify-tui",
   "module": "index.ts",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/react": "^19.2.14",
+    "react-devtools-core": "7"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -11,15 +13,17 @@
   "scripts": {
     "start": "bun run index.ts",
     "dev": "bun run index.ts",
-    "typecheck": "bunx tsc --noEmit"
+    "typecheck": "bunx tsc --noEmit",
+    "build": "bun build index.ts --compile --outfile spot"
   },
   "trustedDependencies": [
     "protobufjs"
   ],
   "type": "module",
   "dependencies": {
-    "@opentui/core": "^0.1.83",
+    "@opentui/react": "^0.1.84",
     "ghostty-opentui": "^1.4.5",
-    "jimp": "^1.6.0"
+    "jimp": "^1.6.0",
+    "react": "^19.2.4"
   }
 }

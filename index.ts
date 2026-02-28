@@ -11,6 +11,10 @@ async function main(): Promise<void> {
   loadEnvFile();
 
   const tokenProvider = new ClientSecretTokenProvider();
+
+  // Resolve auth before the TUI enters the alternate screen, so any refresh-token prompt is visible.
+  await tokenProvider.getAccessToken();
+
   const spotifyApiClient = new SpotifyWebApiClient(tokenProvider);
   const playerAdapter = createPlayerAdapterFromEnv();
   const backend = new SpotifyBackend(spotifyApiClient, {
