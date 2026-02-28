@@ -14,7 +14,7 @@
     "start": "bun run index.ts",
     "dev": "bun run index.ts",
     "typecheck": "bunx tsc --noEmit",
-    "build": "bun build index.ts --compile --outfile spot"
+    "build": "bun build index.ts --compile --outfile dist/spotifytui"
   },
   "trustedDependencies": [
     "protobufjs"
